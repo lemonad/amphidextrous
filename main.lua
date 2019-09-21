@@ -6,6 +6,8 @@ local Sub = require("sub")
 local Vec2 = require("vec2")
 local XWave = require('xwave')
 
+local DEBUG = 0
+
 local WIDTH = 800
 local HEIGHT = 600
 local NUM_SYSTEMS = 13
@@ -14,12 +16,8 @@ local BEGIN_DIFFICULTY = 0.955
 local END_DIFFICULTY = 0.99
 local N_SECONDS_TO_MAX_DIFFICULTY = 60 * 5
 
--- arm_length1 = 200
--- arm_length2 = 170
--- arm_angle1 = math.pi / 4.0
--- arm_angle2 = math.pi / 4.0
--- target = Vec2(300, 300)
--- current_pos = Vec2(300, 300)
+local t = 0
+local start_game_t = 0
 
 function love.load()
   math.randomseed(os.time())
@@ -40,8 +38,6 @@ function love.load()
   setup_intro()
 end
 
-local t = 0
-local start_game_t = 0
 function love.update(dt)
   t = t + dt
   if wait_for_update then
@@ -268,17 +264,13 @@ function love.draw()
   local sand_color = Color:color_from_index(24)
   love.graphics.setBackgroundColor(Color:color_from_index(26):rgba())
   love.graphics.setColor(wave_color:rgba())
-  -- love.graphics.setColor(125.0 / 255, 131.0 / 255, 153.0 / 255, 1.0)
   xwaves[1]:draw()
 
   love.graphics.setCanvas(wave2)
   love.graphics.clear()
   shader:send("wave_seed", {10.0, 10000.0})
-  -- shader:send("bottom_color", {196.0 / 255, 208.0 / 255, 163.0 / 255, 1.0});
   shader:send("bottom_color", Color:color_from_index(26):lighten(0.1):rgba())
-  -- shader:send("top_color", {141.0 / 255, 168.0 / 255, 144.0 / 255, 0.0})
   shader:send("top_color", Color:color_from_index(30):rgba(0.0))
-  -- shader:send("line_color", {92.0 / 255, 126.0 / 255, 113.0 / 255, 1.0})
   shader:send("line_color", wave_color:darken(0.0):rgba())
   shader:send("under_color", sand_color:rgba())
   love.graphics.setShader(shader)
@@ -289,15 +281,9 @@ function love.draw()
 
   love.graphics.setBlendMode("alpha", "premultiplied")
   love.graphics.setColor(1, 1, 1, 1)
-  -- love.graphics.draw(wave4, 0, -50 + 5.0 * math.sin(t), 0)
-  -- love.graphics.draw(wave3, 0, 80 + 10.0 * math.sin(t), 0)
-  -- love.graphics.draw(wave1, 0, 190 + 10.0 * math.sin(t), 0)
   local wave_y = 20 + 10.0 * math.sin(0.5 * t + 0.3)
   love.graphics.draw(wave2, 0, wave_y, 0)
   love.graphics.setBlendMode("alpha")
-
-  -- local beta = math.pi - gamma
-  -- local alpha = math.asin((l2 * math.sin(gamma)) / (x * x + y * y)) + math.atan2(x, y)
 
   love.graphics.origin()
   lsystems[2]:draw()
@@ -314,7 +300,7 @@ function love.draw()
   love.graphics.origin()
   lsystems[13]:draw()
   love.graphics.origin()
- 
+
   love.graphics.setColor(sand_color:rgba())
   love.graphics.rectangle("fill", 0, 530 + wave_y, WIDTH, HEIGHT)
 
@@ -348,11 +334,14 @@ function love.draw()
   end
 
   love.graphics.setColor(1, 1, 1)
-  -- love.graphics.setFont(sniglet_small_font)
-  -- love.graphics.print("Current FPS: "..tostring(love.timer.getFPS()), 10, 520)
-  -- love.graphics.print("#fishes: "..tostring(#fishes), 10, 550)
-  -- love.graphics.print("#bags: "..tostring(#bags), 10, 580)
-  -- love.graphics.print("AMPHIDEXTROUS", 300, 0)
+  if DEBUG then
+    love.graphics.setFont(sniglet_small_font)
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS()), 10, 520)
+    love.graphics.print("#fishes: "..tostring(#fishes), 10, 550)
+    love.graphics.print("#bags: "..tostring(#bags), 10, 580)
+  end
+
+  love.graphics.printf("AMPHIDEXTROUS", 250, 0, 300, "center")
 
   love.graphics.setFont(sniglet_font)
   love.graphics.print(tostring(points), 10, 0)
@@ -365,58 +354,6 @@ function love.draw()
     lives[i]:draw()
   end
 end
-
--- function setup_lsystems()
---   axiom = "X"
---   productions = {
---     ["X"] = function()
---       if math.random() < 0.8 then
---         return "F-[[X]+X]+F[+FX]-X"
---       else
---         return "F-[[X]+X]-F[+FX]+FX"
---       end
---     end,
---     ["F"] = "FF"
---   }
---   lsystems = {}
---   centers = {}
---   left_angles = {}
---   right_angles = {}
---   offsets = {}
---   offset_phases = {}
---   angle_phases = {}
---   lengths = {}
---   angles = {}
---   for i = 1, NUM_SYSTEMS do
---     centers[i] = (math.random() - 0.5) * 15.0
---     left_angles[i] = 0
---     right_angles[i] = 0
---     offset_phases[i] = math.random() * math.pi
---     angle_phases[i] = math.random() * math.pi
---     angles[i] = 22.5 + (math.random() - 0.5) * 25.0
---     offsets[i] = (math.random() - 0.5) * 10.0
---     lengths[i] = 20.0 + math.random() * 20.0
---     finals = {
---       ["-"] = function() love.graphics.rotate((math.pi / 180.0) * left_angles[i]) end,
---       ["+"] = function() love.graphics.rotate((math.pi / 180.0) * right_angles[i]) end,
---       ["["] = function() love.graphics.push() end,
---       ["]"] = function()
---         love.graphics.pop()
---       end,
---       ["F"] = function(ix, symbol, iterations)
---         love.graphics.setColor(0.6, 0.8, 0.7)
---         love.graphics.line(0, 0, 0, -lengths[i] / (iterations + 1))
---         love.graphics.translate(0, -lengths[i] / (iterations + 1))
---       end,
---       ["X"] = function(ix, symbol, iterations)
---         love.graphics.setColor(0.1, 0.8, 0.2, 0.3)
---         love.graphics.circle("fill", 0, 0, 4)
---       end
---     }
---     lsystems[i] = LSystem(axiom, productions, finals, Vec2(100 + 150 * (i - 1), 600))
---     lsystems[i]:iterate(5)
---   end
--- end
 
 function setup_lsystems()
   axiom = "X"
@@ -457,9 +394,7 @@ function setup_lsystems()
     angles[i] = 36.5 + (math.random() - 0.5) * 25.0
     offsets[i] = (math.random() - 0.5) * 10.0
     lengths[i] = 28.0 + math.random() * 20.0
-    -- stem_colors[i] = { math.random(), math.random(), math.random(), 0.85 }
     stem_colors[i] = Color:random_color(0.85):rgba()
-    -- leaf_colors[i] = { math.random(), math.random(), math.random(), 0.3 }
     leaf_colors[i] = Color:random_color(0.3):rgba()
     finals = {
       ["-"] = function() love.graphics.rotate((math.pi / 180.0) * left_angles[i]) end,
@@ -602,21 +537,6 @@ function setup_level()
   local lambda = poses[1].crest_circle_radius * 7.0
   poses[1].crest_circle_center.x = -lambda * 1.3
   xwaves[1] = XWave(poses, 8, lambda, WIDTH, HEIGHT)
-  -- poses[1].crest_circle_radius = 40.0
-  -- poses[1].crest_circle_center.y = 210.0
-  -- lambda = poses[1].crest_circle_radius * 6.65
-  -- poses[1].crest_circle_center.x = -lambda * 1.3
-  -- xwaves[2] = XWave(poses, 7, lambda, WIDTH, HEIGHT)
-  -- poses[1].crest_circle_radius = 50.0
-  -- poses[1].crest_circle_center.y = 375.0
-  -- lambda = poses[1].crest_circle_radius * 6.3
-  -- poses[1].crest_circle_center.x = -lambda * 1.35
-  -- xwaves[3] = XWave(poses, 6, lambda, WIDTH, HEIGHT)
-  -- poses[1].crest_circle_radius = 60.0
-  -- poses[1].crest_circle_center.y = 520.0
-  -- lambda = poses[1].crest_circle_radius * 6.0
-  -- poses[1].crest_circle_center.x = -lambda * 1.5
-  -- xwaves[4] = XWave(poses, 5, lambda, WIDTH, HEIGHT)
 
   sub = Sub(Vec2(400, 300))
 

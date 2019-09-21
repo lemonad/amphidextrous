@@ -151,22 +151,6 @@ function Plastic:draw()
     vertices[#vertices] = nil
   end
 
-  -- print("---------")
-  -- for i = 1, #vertices, 2 do
-  --   print(i, vertices[i], vertices[i + 1])
-  -- end
-
-  -- curve = Bezier:curve(lr, lr, ur, ur)
-  -- verts = curve:render(2)
-  -- for i=3, #verts do
-  --   vertices[#vertices + 1] = verts[i]
-  -- end
-  -- curve = Bezier:curve(ur, ur, ul, ul)
-  -- verts = curve:render(2)
-  -- for i=3, #verts do
-  --   vertices[#vertices + 1] = verts[i]
-  -- end
-
   -- love.graphics.setLineJoin("none")
   -- love.graphics.setLineStyle("smooth")
   love.graphics.setColor(self.color:lighten(0.0):rgba())
@@ -179,15 +163,6 @@ function Plastic:draw()
   love.graphics.line(vertices)
   vertices[#vertices + 1] = vertices[1]
   vertices[#vertices + 1] = vertices[2]
-
-  -- local upper_verts = upper_curve:render(3)
-  -- vertices = {
-  --   ul.x, ul.y,
-  --   ll.x, ll.y,
-  --   lr.x, lr.y,
-  --   ur.x, ur.y
-  -- }
-  -- love.graphics.line(vertices)
 end
 
 function Plastic:dir(v)

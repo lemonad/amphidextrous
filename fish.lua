@@ -92,10 +92,6 @@ function Fish:update(t, dt)
     end
     self.pos.x = self.pos.x - self:dir(self.current_speed) * dt
   end
-
-  -- if self.happy then
-  -- else
-  -- end
 end
 
 function Fish:draw()

@@ -99,12 +99,10 @@ function S:draw()
     local arm = self.arms[i]
     love.graphics.push()
     love.graphics.translate(arm.pos.x, arm.pos.y)
-    -- love.graphics.rotate(math.pi / 5.0)
     love.graphics.rotate(arm.angle1)
     love.graphics.rectangle("fill", 0, 0, arm.length1, 10)
 
     love.graphics.translate(arm.length1, 0)
-    -- love.graphics.rotate(math.pi / 5.0)
     love.graphics.rotate(arm.angle2)
     love.graphics.rectangle("fill", 0, 0, arm.length2, 10)
 
