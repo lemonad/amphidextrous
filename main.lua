@@ -6,14 +6,14 @@ local Sub = require("sub")
 local Vec2 = require("vec2")
 local XWave = require('xwave')
 
-local DEBUG = 0
+local DEBUG = false
 
 local WIDTH = 800
 local HEIGHT = 600
 local NUM_SYSTEMS = 13
 
-local BEGIN_DIFFICULTY = 0.955
-local END_DIFFICULTY = 0.99
+local BEGIN_DIFFICULTY = 0.985
+local END_DIFFICULTY = 0.95
 local N_SECONDS_TO_MAX_DIFFICULTY = 60 * 5
 
 local t = 0
@@ -180,8 +180,8 @@ function love.update(dt)
   end
 
   if (math.random() > difficulty) then
-    local y = HEIGHT + 50.0
-    local x = 25.0 + math.random() * (WIDTH - 50.0)
+    local y = HEIGHT + 25.0
+    local x = 75.0 + math.random() * (WIDTH - 150.0)
     bags[#bags + 1] = Plastic(Vec2(x, y))
   end
 
@@ -460,6 +460,11 @@ function draw_intro()
   love.graphics.print("Sound effects by loadless.itch.io and", 200, 430)
   love.graphics.print("jalastram.itch.io (CC-BY-CA 3.0)", 220, 460)
 
+  love.graphics.printf(
+    "A game by Jonas Nockert for Kodsnack's Game Jam #3",
+    100, 550, 600, "center"
+  )
+
   if intro_transition then
     love.graphics.setColor(0, 0, 0, intro_transition_alpha)
     love.graphics.rectangle("fill", 0, 0, WIDTH, HEIGHT)
@@ -550,9 +555,8 @@ end
 function setup_shader()
   local data = love.image.newImageData(800, 10)
   for i = 0, 9, 1 do
-      local file = io.open("handdrawn-data" .. i .. ".txt", "r");
       local handdrawn_data = {}
-      for line in file:lines() do
+      for line in love.filesystem.lines("handdrawn-data" .. i .. ".txt") do
           handdrawn_data[#handdrawn_data+1] = tonumber(line)
       end
 

@@ -33,7 +33,7 @@ end
 
 function Plastic:update(t, dt)
   self.center_pos.y = self.center_pos.y - self.current_speed * dt
-  self.center_pos.x = self.center_pos.x + self:dir(10.0) * dt
+  self.center_pos.x = self.center_pos.x + self:dir(5.0) * dt
 
   self.angle = self.angle + dt / 24.0
   self.mult = dt
