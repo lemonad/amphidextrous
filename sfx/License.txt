@@ -1,0 +1,41 @@
+                      --------------------
+                           CC-BY 3.0
+                      --------------------
+
+                    Retro Game Sounds SFX | # 1
+
+You are free to:
+
+Share — copy and redistribute the material in any medium or format
+Adapt — remix, transform, and build upon the material
+for any purpose, even commercially.
+
+The licensor cannot revoke these freedoms as long as you follow the license terms.
+
+
+Under the following terms:
+
+Attribution — You must give appropriate credit, provide a link to the license, 
+and indicate if changes were made. You may do so in any reasonable manner, 
+but not in any way that suggests the licensor endorses you or your use.
+
+No additional restrictions — You may not apply legal terms or technological measures 
+that legally restrict others from doing anything the license permits.
+
+
+
+Format                                   : Wave
+Producer                                 : Jesús Lastra
+Encoded date                             : 2014:08:17 13:05:42
+Format                                   : PCM
+Format settings, Endianness              : Little
+Format settings, Sign                    : Signed
+Codec ID                                 : 1
+Channel(s)                               : 2 channels
+Sampling rate                            : 44.1 KHz
+Bit depth                                : 24 bits
+
+
+Author: Jesús Lastra
+
+Email: jalastram@gmail.com
