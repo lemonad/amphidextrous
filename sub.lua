@@ -118,11 +118,24 @@ function S:draw()
     love.graphics.circle("fill", arm.current_pos.x - self.pos.x, arm.current_pos.y - self.pos.y, 15)
   end
 
+  -- driver
+  love.graphics.push()
+  love.graphics.setColor(Color:color_from_index(12):rgba())
+  love.graphics.arc("fill", 0, -49, 17, 0, -math.pi)
+  love.graphics.rectangle("fill", -17, -49, 34, 10)
+  love.graphics.setColor(Color:color_from_index(21):rgba())
+  love.graphics.circle("fill", -7, -47, 6)
+  love.graphics.circle("fill", 7, -47, 6)
+  love.graphics.setColor(Color:color_from_index(17):rgba())
+  love.graphics.circle("fill", -6, -46, 3)
+  love.graphics.circle("fill", 6, -46, 3)
+  love.graphics.pop()
+
   -- cockpit
-  love.graphics.setColor(Color:color_from_index(27):rgba())
+  love.graphics.setColor(Color:color_from_index(27):rgba(0.5))
   love.graphics.arc("fill", 0, -39, 30, 0, -math.pi)
 
-  --  sub
+  -- sub
   love.graphics.setColor(Color:color_from_index(13):rgba())
   love.graphics.arc("fill", -50, 0, 40, math.pi / 2.0, 3 * math.pi / 2.0)
   love.graphics.rectangle("fill", -50, -40, 100, 80)
@@ -132,7 +145,6 @@ function S:draw()
   love.graphics.circle("fill", -50, 0, 13)
   love.graphics.circle("fill", 0, 0, 13)
   love.graphics.circle("fill", 50, 0, 13)
-
 end
 
 function S:set_target(x, y)
