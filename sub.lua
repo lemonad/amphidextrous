@@ -40,9 +40,16 @@ function S:update(t, dt)
     local a2 = arm.angle2
 
     local pos = Vec2:sub(arm.target, Vec2:add(self.pos, arm.pos))
-    if pos:norm() < (l1 + l2 - 1) then
+    if true then -- pos:norm() < (l1 + l2 - 1) then
+      local xy = Vec2(pos.x, pos.y)
+      local xyn = xy:norm() / (l1 + l2 - 1)
       local x = pos.x
       local y = pos.y
+      if xyn > 1.0 then
+        x = x / xyn
+        y = y / xyn
+      end
+
       local beta = math.acos((x * x + y * y - l1 * l1 - l2 * l2) / (2 * l1 * l2))
       local alpha = math.atan2(y, x) - math.atan2(l2 * math.sin(beta), l1 + l2 * math.cos(beta))
 
