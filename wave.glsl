@@ -7,10 +7,10 @@ uniform vec4 bottom_color;
 uniform vec4 line_color;
 uniform vec4 under_color;
 
-float pi = atan(1.0) * 4.0;
-float line_width = 5.0;
-float half_width = line_width / 2.0;
-float quarter_width = line_width / 4.0;
+const float pi = atan(1.0) * 4.0;
+const float line_width = 5.0;
+const float half_width = line_width / 2.0;
+const float quarter_width = line_width / 4.0;
 
 highp float rand(vec2 co) {
   highp float a = 12.9898;
@@ -32,7 +32,7 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords) {
   float s = time;
   float t = time;
 
-  vec2 seed = vec2(5050, 9090);
+  vec2 seed = vec2(5050.0, 9090.0);
   vec2 coord;
   // line_color = bottom_color;
   // line_color.a = 0.5;
@@ -41,7 +41,7 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords) {
   vec4 above_color = bottom_color;
   vec4 below_color = bottom_color;
 
-  float y = -600;
+  float y = -600.0;
 
   // const vec3 MyArray[4]=vec3[4](
   //   vec3(1.5,34.4,3.2),
@@ -91,16 +91,16 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords) {
     }
 
     float r[8];
-    r[0] = rand(wave_seed) * 2.0 * pi + i * 0.1;
+    r[0] = rand(wave_seed) * 2.0 * pi + float(i) * 0.1;
     r[1] = rand(wave_seed * r[0]) * pi / 2.0;
     r[2] = rand(wave_seed * r[1]) * 2.0 * pi;
     r[3] = rand(wave_seed * r[2]) * pi / 5.0;
     r[4] = rand(wave_seed * r[3]) * pi / 4.0;
-    r[5] = rand(wave_seed * r[4]) * 2 * pi;
+    r[5] = rand(wave_seed * r[4]) * 2.0 * pi;
     r[6] = rand(wave_seed * r[5]) * pi;
     r[7] = rand(wave_seed * r[6]) * pi;
 
-    y = y + 105 + sin(r[0] + r[1] * t + pi * r[2] * screen_coords_norm.x) * 10.0 +
+    y = y + 105.0 + sin(r[0] + r[1] * t + pi * r[2] * screen_coords_norm.x) * 10.0 +
                  sin(screen_coords_norm.x * r[3] + t * r[4]) *
                  cos(r[5] + pi * r[6] * screen_coords_norm.x + pi * r[7] * t *
                      0.05) * 5.0;
@@ -108,12 +108,12 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords) {
 
     // Generate subtle noise to mimic handdrawn lines.
     float k = floor(screen_coords.x / 5.0);
-    vec2 drawn_noise_seed = vec2(i + k, k);
+    vec2 drawn_noise_seed = vec2(float(i) + k, k);
     float drawn_noise = rand(drawn_noise_seed) * 0.5;
 
     // Mimic hand movements.
     coord.x = screen_coords.x / n;
-    coord.y = 0.05 + i / 10.0;
+    coord.y = 0.05 + float(i) / 10.0;
     float hand_movement = (-Texel(handdrawn, coord).y + 0.5) * 6.0;
 
     // float noise_y = y + (noise.y - 0.5) * 12 + rand(seed) * 0.5;
@@ -125,19 +125,19 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords) {
       continue;
     }
 
-    if (delta >= 0 && delta < half_width) {
+    if (delta >= 0.0 && delta < half_width) {
       return mix(
           line_color,
           above_color,
           max(min((abs_delta - quarter_width) / quarter_width, 1.0), 0.0)
           );
-    } else if (i == 0 && delta < 0) {
+    } else if (i == 0 && delta < 0.0) {
       return mix(
           line_color,
           under_color,
           max(min((abs_delta - quarter_width) / quarter_width, 1.0), 0.0)
           );
-    } else if (delta < 0 && abs_delta < half_width) {
+    } else if (delta < 0.0 && abs_delta < half_width) {
       return mix(
           line_color,
           below_color,

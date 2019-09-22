@@ -1,10 +1,11 @@
-local Color = require("color")
-local Fish = require("fish")
-local LSystem = require("lsystem")
-local Plastic = require("plastic")
-local Sub = require("sub")
-local Vec2 = require("vec2")
-local XWave = require('xwave')
+local Color = require "color"
+local Fish = require "fish"
+local LSystem = require "lsystem"
+local Plastic = require "plastic"
+local Sub = require "sub"
+local Vec2 = require "vec2"
+local XWave = require "xwave"
+local scrale = require "scrale"
 
 local DEBUG = false
 
@@ -20,6 +21,15 @@ local t = 0
 local start_game_t = 0
 
 function love.load()
+  scrale.init({
+    fillHorizontally = false, -- fill horizontally on fullscreen
+    fillVertically = true, -- fill vertically on fullscreen
+    scaleFilter = "nearest",
+    scaleAnisotropy = 1,
+    blendMode = { "alpha", "premultiplied" },
+    backgroundColor = Color:color_from_index(26):rgba()
+  })
+
   math.randomseed(os.time())
   sniglet_font = love.graphics.newFont("fonts/sniglet.fnt")
   sniglet_small_font = love.graphics.newFont("fonts/snigletsmall.fnt")
@@ -218,17 +228,47 @@ function love.mousepressed(x, y, button, istouch, presses)
     sfx:play()
     outro = false
     setup_intro()
-  else
-  sub:set_target(x, y)
+  end
+end
+
+function love.mousemoved(x, y, dx, dy, istouch)
+  if sub and love.mouse.isDown(1) then
+    xg, yg = scrale.screenToGame(x, y)
+    sub:set_target(xg, yg)
+  end
+end
+
+function love.touchmoved(id, x, y, dx, dy, pressure)
+  if sub then
+    xg, yg = scrale.screenToGame(x, y)
+    sub:set_target(xg, yg)
   end
 end
 
 function love.draw()
+  local wave_color = Color:color_from_index(27)
+  local sand_color = Color:color_from_index(24)
+
+  love.graphics.setCanvas(wave2)
+  love.graphics.clear()
+  shader:send("wave_seed", {10.0, 10000.0})
+  shader:send("bottom_color", Color:color_from_index(26):lighten(0.1):rgba())
+  shader:send("top_color", Color:color_from_index(30):rgba(0.0))
+  shader:send("line_color", wave_color:darken(0.0):rgba())
+  shader:send("under_color", sand_color:rgba())
+  love.graphics.setShader(shader)
+  love.graphics.rectangle('fill', 0, 0, 800, 530)
+  love.graphics.setShader()
+  love.graphics.setCanvas()
+
+  scrale.drawOnCanvas(true)
   if intro then
     draw_intro()
+    scrale.draw()
     return
   elseif outro then
     draw_outro()
+    scrale.draw()
     return
   end
 
@@ -257,27 +297,13 @@ function love.draw()
   end
 
   if wait_for_update then
+    scrale.draw()
     return
   end
 
-  local wave_color = Color:color_from_index(27)
-  local sand_color = Color:color_from_index(24)
   love.graphics.setBackgroundColor(Color:color_from_index(26):rgba())
   love.graphics.setColor(wave_color:rgba())
   xwaves[1]:draw()
-
-  love.graphics.setCanvas(wave2)
-  love.graphics.clear()
-  shader:send("wave_seed", {10.0, 10000.0})
-  shader:send("bottom_color", Color:color_from_index(26):lighten(0.1):rgba())
-  shader:send("top_color", Color:color_from_index(30):rgba(0.0))
-  shader:send("line_color", wave_color:darken(0.0):rgba())
-  shader:send("under_color", sand_color:rgba())
-  love.graphics.setShader(shader)
-  love.graphics.rectangle('fill', 0, 0, 800, 530)
-
-  love.graphics.setShader()
-  love.graphics.setCanvas()
 
   love.graphics.setBlendMode("alpha", "premultiplied")
   love.graphics.setColor(1, 1, 1, 1)
@@ -353,6 +379,9 @@ function love.draw()
     lives[i].pos.y = 30
     lives[i]:draw()
   end
+  love.graphics.origin()
+
+  scrale.draw()
 end
 
 function setup_lsystems()
