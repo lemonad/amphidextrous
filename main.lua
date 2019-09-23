@@ -2,6 +2,7 @@ local Color = require "color"
 local Fish = require "fish"
 local LSystem = require "lsystem"
 local Plastic = require "plastic"
+local Shader = require "shader"
 local Sub = require "sub"
 local Vec2 = require "vec2"
 local XWave = require "xwave"
@@ -44,7 +45,7 @@ function love.load()
   tide_loop:setVolume(0.1)
   love.audio.play(tide_loop)
 
-  setup_shader()
+  wave_shader = Shader()
   setup_intro()
 end
 
@@ -89,7 +90,7 @@ function love.update(dt)
     return
   end
 
-  shader:send("time", t)
+  wave_shader.shader:send("time", t)
 
   for i = 1, NUM_SYSTEMS do
     offset = offsets[i] + math.sin(0.5 * t + offset_phases[i]) * 2.0
@@ -249,17 +250,7 @@ function love.draw()
   local wave_color = Color:color_from_index(27)
   local sand_color = Color:color_from_index(24)
 
-  love.graphics.setCanvas(wave2)
-  love.graphics.clear()
-  shader:send("wave_seed", {10.0, 10000.0})
-  shader:send("bottom_color", Color:color_from_index(26):lighten(0.1):rgba())
-  shader:send("top_color", Color:color_from_index(30):rgba(0.0))
-  shader:send("line_color", wave_color:darken(0.0):rgba())
-  shader:send("under_color", sand_color:rgba())
-  love.graphics.setShader(shader)
-  love.graphics.rectangle('fill', 0, 0, 800, 530)
-  love.graphics.setShader()
-  love.graphics.setCanvas()
+  wave_shader:draw_on_canvas()
 
   scrale.drawOnCanvas(true)
   if intro then
@@ -305,11 +296,8 @@ function love.draw()
   love.graphics.setColor(wave_color:rgba())
   xwaves[1]:draw()
 
-  love.graphics.setBlendMode("alpha", "premultiplied")
-  love.graphics.setColor(1, 1, 1, 1)
   local wave_y = 20 + 10.0 * math.sin(0.5 * t + 0.3)
-  love.graphics.draw(wave2, 0, wave_y, 0)
-  love.graphics.setBlendMode("alpha")
+  wave_shader:draw(wave_y)
 
   love.graphics.origin()
   lsystems[2]:draw()
@@ -581,22 +569,3 @@ function setup_level()
   removed_plastic_sfx:setVolume(0.6)
 end
 
-function setup_shader()
-  local data = love.image.newImageData(800, 10)
-  for i = 0, 9, 1 do
-      local handdrawn_data = {}
-      for line in love.filesystem.lines("handdrawn-data" .. i .. ".txt") do
-          handdrawn_data[#handdrawn_data+1] = tonumber(line)
-      end
-
-      -- print(#handdrawn_data)
-      for j=0, #handdrawn_data-1 do
-          local v = 0.5 + handdrawn_data[j + 1] / 6.0
-          data:setPixel(j, i, 0, v, 0, 1.0)
-      end
-  end
-  handdrawn_data = love.graphics.newImage(data)
-  wave2 = love.graphics.newCanvas(800, 530)
-  shader = love.graphics.newShader("wave.glsl")
-  shader:send("handdrawn", handdrawn_data)
-end
