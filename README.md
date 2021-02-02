@@ -6,6 +6,6 @@ See [gameplay video](https://www.youtube.com/watch?v=daudcwsBg8w&feature=emb_log
 
 ![Screen](samples/screen.png)
 
-![Playing](playing.png)
+![Playing](playing.jpg)
 
-![Procedurally generated fishes](procedural-fishes.png)
+![Procedurally generated fishes](procedural-fishes.gif)
